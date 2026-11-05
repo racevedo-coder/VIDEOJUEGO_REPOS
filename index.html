@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Dulce Reto Repostero - Inicio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+     <header class="encabezado-inicio">
+       <div class="decoracion" aria-hidden="true">
+         <img src="img/cupcake.png" alt="cupcake"/>
+         <img src="img/fresa.png" alt="fresa"/>
+         <img src="img/pastel_fresa.png" alt="pastel_fresa"/>
+       </div>
+     <h1>Dulce Reto Repostero</h1>
+     <p class="subtitulo">Reúne los ingredientes correctos, completa la receta y gana el reto.</p>
+     </header>
+
+     
+  <main class="pantalla">
+ 
+    <section class="instrucciones">
+      <article class="tarjeta">
+        <h2>Elige</h2>
+        <p>En tu turno, toca un ingrediente del tablero.</p>
+      </article>
+      <article class="tarjeta">
+        <h2>Completa</h2>
+        <p>Si pertenece a la receta, sumas puntos. Si no, pierdes una vida.</p>
+      </article>
+      <article class="tarjeta">
+        <h2>Cuidado</h2>
+        <p>Hay un ingrediente trampa que congela tu siguiente turno.</p>
+      </article>
+    </section>
+
+    <section class="formulario">
+        <form class="registro" action="juego.html" method="get">
+      <div class="campo">
+        <label for="nombre1">Jugadora 1</label>
+        <input id="nombre1" name="j1" type="text" placeholder="Escribe tu nombre">
+      </div>
+      <div class="campo">
+        <label for="nombre2">Jugadora 2</label>
+        <input id="nombre2" name="j2" type="text" placeholder="Escribe tu nombre">
+      </div>
+      <button id="btn-comenzar" href="juego.html" class="boton boton-principal" type="submit">Comenzar a jugar</button>
+    </form>
+    </section>
+
+  </main>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dulce Reto Repostero - Juego</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+  <header class="encabezado-juego">
+    <h1>Dulce Reto Repostero</h1>
+    <a id="btn-volver" class="boton boton-secundario" href="index.html">Volver al inicio</a>
+  </header>
+
+  
+  <main class="pantalla">
+
+ 
+    <section class="jugadoras">
+    <!-- Panel de la jugadora 1 -->
+      <article id="panelj1" class="panel activa">
+        <div class="panel-titulo">
+          <h2 id="nombrej1">Jugadora 1</h2>
+          <span id="etiquetaj1" class="etiqueta">Tu turno</span>
+        </div>
+        <div class="datos">
+          <span>Puntos: <strong id="puntosj1">0</strong></span>
+          <span id="vidas-j1" class="vidas">♥ ♥ ♥</span>
+        </div>
+        <div id="tazaj1" class="taza">
+          <div class="espacio"></div>
+          <div class="espacio"></div>
+          <div class="espacio"></div>
+        </div>
+      </article>
+
+       <!-- Panel de la jugadora 2 -->
+
+      <article id="panelj2" class="panel">
+        <div class="panel-titulo">
+          <h2 id="nombrej2">Jugadora 2</h2>
+          <span id="etiquetaj2" class="etiqueta">En espera</span>
+        </div>
+        <div class="datos">
+          <span>Puntos: <strong id="puntosj2">0</strong></span>
+          <span id="vidasj2" class="vidas">♥ ♥ ♥</span>
+        </div>
+        <div id="tazaj2" class="taza">
+          <div class="espacio"></div>
+          <div class="espacio"></div>
+          <div class="espacio"></div>
+        </div>
+      </article>
+ 
+    </section>
+
+
+    <!-- Receta actual -->
+    <section class="receta">
+      <div>
+        <span class="receta-etiqueta">Receta actual</span>
+        <h2 id="nombre-receta">Torta de chocolate</h2>
+      </div>
+      <p id="faltantes">Faltan: harina, huevos, cacao</p>
+    </section>
+
+
+ <section id="tablero" class="tablero">
+      <button class="casilla" type="button" aria-label="Huevo">🥚</button>
+      <button class="casilla" type="button" aria-label="Sal">🧂</button>
+      <button class="casilla elegida" type="button" aria-label="Chocolate">🍫</button>
+      <button class="casilla" type="button" aria-label="Leche">🥛</button>
+      <button class="casilla" type="button" aria-label="Fresa">🍓</button>
+      <button class="casilla" type="button" aria-label="Harina">🌾</button>
+      <button class="casilla" type="button" aria-label="Mantequilla">🧈</button>
+      <button class="casilla" type="button" aria-label="Pastel">🍰</button>
+    </section>
+
+      <!-- Mensajes y reinicio -->
+    <div class="barra-inferior">
+      <p id="mensaje" class="mensaje">Turno de la Jugadora 1</p>
+      <button id="btn-reiniciar" class="boton boton-principal" type="button">Reiniciar juego</button>
+    </div>
+ 
+  </main>
+ 
+  <script src="script.js"></script>
+
+
+</body>
+</html>
