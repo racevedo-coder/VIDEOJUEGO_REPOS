@@ -70,6 +70,7 @@ let estado = {
   jugadorActivo: 0,      // 0 = Jugadora 1, 1 = Jugadora 2
   jugadasExitosas: 0,    // cuántos aciertos van (para la Regla B)
   congelado: false,      // true cuando se activa la Regla C
+  terminado: false,      // true cuando el juego se acaba
   tablero: [],           // las 8 casillas de la ronda (se llena en armarTablero)
   jugadoras: [
     { nombre: "Jugadora 1", puntos: 0, vidas: vidas_iniciales, taza: [] },
@@ -148,6 +149,7 @@ function dibujarTablero() {
     if (casilla.revelada) {
       boton.textContent = casilla.ingrediente.emoji;
       boton.setAttribute("aria-label", casilla.ingrediente.nombre);
+       boton.classList.add(casilla.resultado);
     } else {
       boton.textContent = "?";
       boton.classList.add("oculta");
@@ -191,19 +193,85 @@ function actualizarMarcador() {
 //escribe el nombre de la receta actual y la lista de ingredientes 
 // que hay que conseguir.
 
-
 function actualizarReceta() {
   const receta = recetas[estado.recetaActual];
 
-  const nombres = [];
+  const faltantes = [];
   for (const ingrediente of receta.ingredientes) {
-    nombres.push(ingrediente.nombre);
+    if (!estaConseguido(ingrediente)) {
+      faltantes.push(ingrediente.nombre);
+    }
   }
 
   elNombreReceta.textContent = receta.nombre;
-  elFaltantes.textContent = "Faltan: " + nombres.join(", ");
+  elFaltantes.textContent = faltantes.length > 0
+    ? "Faltan: " + faltantes.join(", ")
+    : "¡Receta completa!";
 }
 
+
+//Dibujar las tazas, pone el emoji de cada ingredientes qque la jugadora ya consiguió
+
+function dibujarTazas() {
+  const receta = recetas[estado.recetaActual];
+
+  for (let i = 0; i < estado.jugadoras.length; i++) {
+    const jugadora = estado.jugadoras[i];
+    const contenedor = document.getElementById("tazaj" + (i + 1));
+
+    contenedor.replaceChildren();
+
+    for (let e = 0; e < receta.ingredientes.length; e++) {
+      const espacio = document.createElement("div");
+      espacio.classList.add("espacio");
+
+      if (e < jugadora.taza.length) {
+        espacio.textContent = jugadora.taza[e].emoji;
+        espacio.classList.add("lleno");
+      }
+
+      contenedor.appendChild(espacio);
+    }
+  }
+}
+
+
+//clasificar lo que salió
+
+function clasificar(ingrediente) {
+  if (ingrediente.esTrampa) {
+    return "trampa";
+  }
+
+  const receta = recetas[estado.recetaActual];
+  for (const correcto of receta.ingredientes) {
+    if (correcto.nombre === ingrediente.nombre) {
+      return "correcto";
+    }
+  }
+
+  return "distractor";
+}
+
+
+//Decidir qué sigue faltando
+
+function estaConseguido(ingrediente) {
+  for (const jugadora of estado.jugadoras) {
+    for (const conseguido of jugadora.taza) {
+      if (conseguido.nombre === ingrediente.nombre) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
+//pasar el turno
+function pasarTurno() {
+  estado.jugadorActivo = estado.jugadorActivo === 0 ? 1 : 0;
+}
 
 //el clic
 //Es lo que hace que el juego reaccione
@@ -211,12 +279,92 @@ function actualizarReceta() {
 function manejarClic(posicion) {
   const casilla = estado.tablero[posicion];
 
-  if (casilla.revelada) {
+  if (estado.terminado || casilla.revelada) {
     return;
   }
 
+  const jugadora = estado.jugadoras[estado.jugadorActivo];
+  const resultado = clasificar(casilla.ingrediente);
+  let mensaje = "";
+
   casilla.revelada = true;
+  casilla.resultado = resultado;
+
+  if (resultado === "correcto") {
+    jugadora.puntos += puntos_por_acierto;
+    jugadora.taza.push(casilla.ingrediente);
+    estado.jugadasExitosas++;
+    mensaje = jugadora.nombre + " acertó con " + casilla.ingrediente.nombre + ".";
+  } else if (resultado === "distractor") {
+    jugadora.vidas--;
+    mensaje = jugadora.nombre + " falló: " + casilla.ingrediente.nombre + " no va en la receta.";
+  } else {
+    mensaje = "¡" + casilla.ingrediente.nombre + " era la trampa!";
+  }
+
+  if (resultado === "correcto" && recetaCompleta()) {
+    if (estado.recetaActual < recetas.length - 1) {
+      pasarARecetaSiguiente();
+      mensaje += " ¡Receta completa! Ahora toca: " + recetas[estado.recetaActual].nombre + ".";
+    } else {
+      terminarJuego();
+      return;
+    }
+  }
+
+  pasarTurno();
   dibujarTablero();
+  actualizarMarcador();
+  dibujarTazas();
+  actualizarReceta();
+  elMensaje.textContent = mensaje + " Turno de " + estado.jugadoras[estado.jugadorActivo].nombre + ".";
+}
+
+
+//Cuando se consiguen todos los ingredientes de una receta
+function recetaCompleta() {
+  const receta = recetas[estado.recetaActual];
+
+  for (const ingrediente of receta.ingredientes) {
+    if (!estaConseguido(ingrediente)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+//Pasa a la siguiente receta
+function pasarARecetaSiguiente() {
+  for (const jugadora of estado.jugadoras) {
+    jugadora.taza = [];
+  }
+  estado.recetaActual++;
+  armarTablero();
+}
+
+//Todas las recetas completadas, se acaba el juego
+
+function terminarJuego() {
+  estado.terminado = true;
+  dibujarTablero();
+  actualizarMarcador();
+  dibujarTazas();
+  actualizarReceta();
+
+  const j1 = estado.jugadoras[0];
+  const j2 = estado.jugadoras[1];
+  let resultadoFinal = "";
+
+  if (j1.puntos > j2.puntos) {
+    resultadoFinal = "¡Ganó " + j1.nombre + " con " + j1.puntos + " puntos!";
+  } else if (j2.puntos > j1.puntos) {
+    resultadoFinal = "¡Ganó " + j2.nombre + " con " + j2.puntos + " puntos!";
+  } else {
+    resultadoFinal = "¡Empate con " + j1.puntos + " puntos cada una!";
+  }
+
+  elMensaje.textContent = "Juego terminado. " + resultadoFinal;
 }
 
 //El arranque
@@ -228,6 +376,7 @@ function iniciarJuego() {
   armarTablero();
   dibujarTablero();
   actualizarMarcador();
+  dibujarTazas();
   actualizarReceta();
   elMensaje.textContent = "Turno de " + estado.jugadoras[estado.jugadorActivo].nombre;
 }
