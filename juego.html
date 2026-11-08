@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dulce Reto Repostero - Juego</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulce Reto Repostero - Juego</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    
+
+  <!-- encabezado, título y enlace para volver al inicio -->
   <header class="encabezado-juego">
     <h1>Dulce Reto Repostero</h1>
     <a id="btn-volver" class="boton boton-secundario" href="index.html">Volver al inicio</a>
   </header>
 
-  
-  <main class="pantalla">
 
- 
-    <section class="jugadoras">
-    <!-- Panel de la jugadora 1 -->
+  <main class="pantalla">
+<!-- Cuadrícula de 3 columnas: panel J1 - zona central - panel J2 -->
+    <div class="area-juego">
+
+      <!-- Panel de la jugadora 1 (izquierda) -->
+        <!-- La clase "activa" marca de quién es el turno, JS la mueve entre paneles -->
       <article id="panelj1" class="panel activa">
         <div class="panel-titulo">
-          <h2 id="nombrej1">Jugadora 1</h2>
+          <!-- JS reemplaza el nombre con el escrito en el inicio -->
+          <h2 id="nombrej1">Jugador 1</h2>
+           <!-- JS alterna el texto entre "Tu turno" y "En espera" -->
           <span id="etiquetaj1" class="etiqueta">Tu turno</span>
         </div>
         <div class="datos">
+           <!-- Puntos y vidas, esas se actualizan desde actualizarMarcador() -->
           <span>Puntos: <strong id="puntosj1">0</strong></span>
           <span id="vidasj1" class="vidas">♥ ♥ ♥</span>
         </div>
+        <p class="taza-label">SU TAZA</p>
+         <!-- La taza, JS crea aquí un espacio por cada ingrediente de la receta
+             y lo llena con el emoji cuando la jugadora acierta (dibujarTazas) -->
         <div id="tazaj1" class="taza">
           <div class="espacio"></div>
           <div class="espacio"></div>
@@ -36,17 +46,45 @@
         </div>
       </article>
 
-       <!-- Panel de la jugadora 2 -->
+      <!-- Zona central: receta + tablero + barra -->
+      <div class="zona-central">
 
+        <!-- Receta actual -->
+           <!-- Tarjeta tipo ticket con el nombre de la receta y los ingredientes que faltan -->
+        <section class="receta">
+          <div>
+            <span class="receta-etiqueta">Receta actual</span>
+            <h2 id="nombre-receta">Torta de chocolate</h2>
+          </div>
+          <p id="faltantes">Faltan: harina, huevos, cacao</p>
+        </section>
+
+
+        <section id="tablero" class="tablero">
+          <!-- El JS genera las casillas dinámicamente al iniciar -->
+        </section>
+
+        <!-- Mensajes y reinicio -->
+         <!-- Mensaje de estado (quién acertó, de quién es el turno...) y botón Reiniciar -->
+        <div class="barra-inferior">
+          <p id="mensaje" class="mensaje">Turno de la Jugador 1</p>
+          <button id="btn-reiniciar" class="boton boton-principal" type="button">Reiniciar juego</button>
+        </div>
+
+      </div>
+
+      <!-- Panel de la jugadora 2 (derecha) -->
+        <!-- Misma estructura que el panel 1, pero empieza "En espera" , sin la clase "activa"-->
       <article id="panelj2" class="panel">
         <div class="panel-titulo">
-          <h2 id="nombrej2">Jugadora 2</h2>
+          <h2 id="nombrej2">Jugador 2</h2>
           <span id="etiquetaj2" class="etiqueta">En espera</span>
         </div>
         <div class="datos">
           <span>Puntos: <strong id="puntosj2">0</strong></span>
           <span id="vidasj2" class="vidas">♥ ♥ ♥</span>
         </div>
+        <p class="taza-label">SU TAZA</p>
         <div id="tazaj2" class="taza">
           <div class="espacio"></div>
           <div class="espacio"></div>
@@ -54,41 +92,28 @@
           <div class="espacio"></div>
         </div>
       </article>
- 
-    </section>
 
-
-    <!-- Receta actual -->
-    <section class="receta">
-      <div>
-        <span class="receta-etiqueta">Receta actual</span>
-        <h2 id="nombre-receta">Torta de chocolate</h2>
-      </div>
-      <p id="faltantes">Faltan: harina, huevos, cacao</p>
-    </section>
-
-
- <section id="tablero" class="tablero">
-      <button class="casilla" type="button" aria-label="Huevo">🥚</button>
-      <button class="casilla" type="button" aria-label="Sal">🧂</button>
-      <button class="casilla elegida" type="button" aria-label="Chocolate">🍫</button>
-      <button class="casilla" type="button" aria-label="Leche">🥛</button>
-      <button class="casilla" type="button" aria-label="Fresa">🍓</button>
-      <button class="casilla" type="button" aria-label="Harina">🌾</button>
-      <button class="casilla" type="button" aria-label="Mantequilla">🧈</button>
-      <button class="casilla" type="button" aria-label="Pastel">🍰</button>
-    </section>
-
-      <!-- Mensajes y reinicio -->
-    <div class="barra-inferior">
-      <p id="mensaje" class="mensaje">Turno de la Jugadora 1</p>
-      <button id="btn-reiniciar" class="boton boton-principal" type="button">Reiniciar juego</button>
     </div>
- 
+
+    <!--Letrero que anuncia el final-->
+     <!-- Ventana emergente, empieza oculta ("oculto") y mostrarLetrero() la muestra
+         para avisos (trampa, intercambio, receta completa) y para el final del juego -->
+    <div id="letrero" class="letrero oculto" role="dialog" aria-modal="true" aria-labelledby="letrero-titulo">
+      <div class="letrero-caja">
+         <!-- Título, texto y botón, JS cambia su contenido según el evento -->
+        <h2 id="letrero-titulo">Título</h2>
+        <p id="letrero-texto">Texto</p>
+        <button id="btn-letrero" class="boton boton-principal" type="button">Jugar de nuevo</button>
+      </div>
+    </div>
+
   </main>
- 
+
+  <!-- El script va al final del body para que todos los elementos
+       ya existan cuando JavaScript los busque con getElementById -->
   <script src="script.js"></script>
 
 
 </body>
+
 </html>

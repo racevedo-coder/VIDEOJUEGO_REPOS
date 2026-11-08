@@ -1,4 +1,5 @@
 :root {
+  /* Colores principales */
   --fondo: #FFF0F5;
   --tarjeta: #FFFAFC;
   --rosa: #F8BBD9;
@@ -10,81 +11,146 @@
   --texto: #5E4B6B;
   --rojo: #F28B82;
   --corazon: #E58AB8;
+
+  /* el grosor, como un sombra,de cada color da el efecto de relieve */
+  --rosa-grosor: #DB8DB5;
+  --lila-grosor: #A98AD9;
+  --menta-grosor: #5FB08F;
+  --rojo-grosor: #CE5F57;
+  --borde-suave: #EBD0DB;
+  --borde-suave-grosor: #E0BCCB;
+  --mantequilla: #FFE6A6;
+  --mantequilla-grosor: #E0B650;
+  --bandeja: #FFF8EF;
+  --bandeja-borde: #F0CDB9;
+  --bandeja-grosor: #E2B79C;
+
+  /* Tipografías */
+
+  --fuente-titulo: "Trebuchet MS", "Segoe UI", sans-serif;
+  --fuente-texto: "Trebuchet MS", "Segoe UI", sans-serif;
+  --brillo: inset 0 4px 0 rgba(255, 255, 255, 0.55);
 }
 
 
+
+/*Estilos base*/
+
+/* Hace que padding y borde cuenten dentro del ancho declarado */
 * {
   box-sizing: border-box;
 }
- 
+
 body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--fondo);
+
+  /* mantel de cuadros*/
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 50%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.55) 50%, transparent 50%);
+  background-size: 56px 56px;
+
   color: var(--texto);
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--fuente-texto);
+   /* Suaviza el cambio de color cuando el fondo se pone rojo */
   transition: background-color 0.3s;
 }
- 
-h1, h2, p {
+
+/* Se quitan los márgenes por defecto del navegador */
+
+h1,
+h2,
+p {
   margin: 0;
 }
- 
+
+h1,
+h2 {
+  font-family: var(--fuente-titulo);
+}
+
+h1 {
+  text-shadow: 0 3px 0 #fff, 0 5px 0 #F4C3D3;
+}
+
 /* Regla C: el JS le agrega esta clase al body durante el turno congelado */
 body.congelado {
   background-color: var(--rojo);
 }
- 
+
 /* Para esconder elementos desde JS si lo necesitas */
 .oculto {
   display: none;
 }
 
+/* Contenedor central que limita el ancho del contenido */
+
 .pantalla {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 40px 40px;
+  padding: 24px 40px 40px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
- 
-/* ---------- Botones ---------- */
+
+/* Botones con grosor */
 .boton {
   display: inline-block;
   border: 0;
   border-radius: 28px;
   padding: 14px 32px;
-  font-family: inherit;
+  font-family: var(--fuente-titulo);
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   color: var(--texto);
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  background-color: var(--cara, var(--rosa));
+  box-shadow: 0 6px 0 var(--grosor, var(--rosa-grosor)), var(--brillo);
+  transition: background-color 0.2s, transform 0.12s, box-shadow 0.12s;
 }
- 
+
+/* Al presionar, el botón baja y la sombra se achica: parece hundirse */
+.boton:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--grosor, var(--rosa-grosor)), var(--brillo);
+}
+
+/* Contorno visible al navegar con teclado */
+
+
+.boton:focus-visible,
+.casilla:focus-visible {
+  outline: 3px solid var(--texto);
+  outline-offset: 3px;
+}
+
 .boton-principal {
-  background-color: var(--rosa);
+  --cara: var(--rosa);
+  --grosor: var(--rosa-grosor);
 }
 
 .boton-principal:hover {
-  background-color: var(--rosa-fuerte);
+  --cara: var(--rosa-fuerte);
 }
- 
+
 .boton-secundario {
-  background-color: var(--lila);
+  --cara: var(--lila);
+  --grosor: var(--lila-grosor);
   padding: 10px 24px;
   font-size: 16px;
 }
- 
-.boton-secundario:hover {
-  background-color: var(--lila-claro);
-}
- 
-/*Inicio*/
 
+.boton-secundario:hover {
+  --cara: var(--lila-claro);
+}
+
+/*Inicio*/
+/* Encabezado centrado con adornos, título y subtítulo */
 .encabezado-inicio {
   display: flex;
   flex-direction: column;
@@ -93,7 +159,8 @@ body.congelado {
   padding: 48px 40px 24px;
   text-align: center;
 }
- 
+
+/* Fila de imágenes decorativas */
 .decoracion {
   display: flex;
   gap: 16px;
@@ -107,63 +174,83 @@ body.congelado {
   align-items: center;
   justify-content: center;
   font-size: 32px;
+  box-shadow: 0 5px 0 rgba(94, 75, 107, 0.18), var(--brillo);
 }
- 
+
 
 .encabezado-inicio h1 {
   font-size: 56px;
   line-height: 1.1;
 }
- 
+
 .subtitulo {
   font-size: 20px;
 }
- 
+
+/* Las 3 tarjetas de instrucciones en una cuadrícula de 3 columnas iguales */
+
 .instrucciones {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 24px;
 }
- 
+
+/* Tarjeta base (lila), el color de borde y sombra cambia en las siguientes */
+
 .tarjeta {
+  --grosor: var(--lila-grosor);
   background-color: var(--tarjeta);
-  border: 2px solid var(--lila);
-  border-radius: 24px;
+  border: 3px solid var(--lila);
+  border-radius: 26px;
   padding: 24px;
-  box-shadow: 0 6px 16px rgba(215, 189, 242, 0.35);
+  box-shadow: 0 8px 0 var(--grosor), 0 16px 20px -10px rgba(94, 75, 107, 0.35);
 }
- 
-.tarjeta:nth-child(2) { border-color: var(--rosa); }
-.tarjeta:nth-child(3) { border-color: var(--menta); }
- 
+
+/* 2. tarjeta: rosa */
+.tarjeta:nth-child(2) {
+  border-color: var(--rosa);
+  --grosor: var(--rosa-grosor);
+}
+
+/*  tarjeta: menta */
+
+.tarjeta:nth-child(3) {
+  border-color: var(--menta);
+  --grosor: var(--menta-grosor);
+}
+
 .tarjeta h2 {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 8px;
 }
- 
+
+/* Formulario de registro: 2 columnas, un campo por jugador*/
 .registro {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
   background-color: var(--tarjeta);
-  border-radius: 28px;
+  border: 3px solid var(--borde-suave);
+  border-radius: 30px;
   padding: 28px;
-  box-shadow: 0 8px 20px rgba(215, 189, 242, 0.4);
+  box-shadow: 0 9px 0 var(--borde-suave-grosor), 0 18px 22px -12px rgba(94, 75, 107, 0.35);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+
 }
- 
+
 .campo {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
- 
+
 .campo label {
   font-size: 15px;
+  font-weight: 700;
 }
- 
+
 .campo input {
   height: 48px;
   border: 2px solid var(--lila);
@@ -173,18 +260,22 @@ body.congelado {
   font-size: 16px;
   color: var(--texto);
   background-color: var(--fondo);
+  box-shadow: inset 0 3px 6px rgba(169, 138, 217, 0.2);
 }
- 
+
 .campo input:focus {
   outline: 3px solid var(--menta);
 }
- 
+
+/* El botón ocupa las dos columnas, de la primera a la última */
+
 .registro .boton {
   grid-column: 1 / -1;
 }
- 
+
 /*Juego*/
 
+/* Encabezado: título a la izquierda y botón "Volver" a la derecha */
 .encabezado-juego {
   max-width: 1100px;
   margin: 0 auto;
@@ -194,253 +285,425 @@ body.congelado {
   align-items: center;
   gap: 16px;
 }
- 
+
 .encabezado-juego h1 {
   font-size: 36px;
 }
 
 
- 
-/* ---------- Paneles de jugadoras ---------- */
-.jugadoras {
+
+/*  3 columnas, panel- zona-central-panel*/
+.area-juego {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 20px;
+  align-items: start;
 }
- 
-.panel {
-  background-color: var(--tarjeta);
-  border: 2px solid var(--lila);
-  border-radius: 28px;
-  padding: 24px;
-  box-shadow: 0 6px 16px rgba(215, 189, 242, 0.35);
+
+/* Receta, tablero y barra inferior apilados verticalmente */
+.zona-central {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
- 
+
+/* Paneles de jugadoras */
+.panel {
+  position: relative;
+  background-color: var(--tarjeta);
+  border: 3px solid var(--borde-suave);
+  border-radius: 28px;
+  padding: 28px 18px 32px;
+  box-shadow: 0 10px 0 var(--borde-suave-grosor);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taza-label {
+  margin: 10px 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto);
+  opacity: 0.75;
+}
+
 /* Jugadora con el turno */
+/* El JS agrega la clase "activa" al panel de quien juega,
+   borde menta, halo exterior y un pequeño levantamiento */
 .panel.activa {
-  border: 4px solid var(--menta);
-  box-shadow: 0 8px 20px rgba(184, 230, 212, 0.55);
+  border: 3px solid var(--menta-borde);
+  box-shadow: 0 0 0 7px var(--menta), 0 10px 0 var(--menta-grosor);
+  transform: translateY(-4px);
 }
- 
+
 .panel-titulo {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
- 
+
 .panel-titulo h2 {
-  font-size: 24px;
+  font-size: 22px;
 }
- 
+
+/*Etiquetas*/
+/* Etiqueta "En espera", en la esquina superior derecha del panel*/
 .etiqueta {
-  font-size: 14px;
-}
- 
-.panel.activa .etiqueta {
-  background-color: var(--menta);
-  border-radius: 14px;
+  position: absolute;
+  top: -15px;
+  right: 14px;
+  font-family: var(--fuente-titulo);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background-color: #F3E3E8;
+  color: #7A5566;
+  border-radius: 99px;
   padding: 4px 14px;
-  font-weight: bold;
 }
- 
+
+/* Si el panel está activo, la etiqueta se centra y se vuelve verde */
+.panel.activa .etiqueta {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  background-color: var(--menta-borde);
+  color: #1D4D3A;
+  padding: 5px 16px;
+  box-shadow: 0 3px 0 var(--menta-grosor);
+}
+
+/* Fila con puntos (izquierda) y vidas (derecha) */
 .datos {
   display: flex;
   justify-content: space-between;
-  font-size: 18px;
+  align-items: flex-end;
+  font-size: 16px;
 }
- 
+
 .vidas {
   color: var(--corazon);
+  letter-spacing: 2px;
+  text-shadow: 0 2px 0 #C4638F;
 }
- 
+
+/*Taza con la forma*/
+/* La taza: cuadrícula de 2 columnas con esquinas inferiores muy redondeadas.
+   margin-right deja espacio para el gancho */
 .taza {
-  display: flex;
-  gap: 12px;
+  position: relative;
+  margin-right: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 12px 20px;
+  background: linear-gradient(#FFF5F6, #FFE9EE);
+  border: 3px solid var(--borde-suave);
+  border-radius: 12px 12px 44px 44px;
+  box-shadow: 0 6px 0 var(--borde-suave-grosor), inset 0 -8px 12px rgba(217, 70, 122, 0.08);
 }
- 
+
+
+/* El gancho de la taza: un pseudo-elemento con borde en forma de "C" invertida */
+.taza::after {
+  content: "";
+  position: absolute;
+  right: -26px;
+  top: 24px;
+  width: 24px;
+  height: 44px;
+  border: 6px solid var(--borde-suave);
+  border-left: 0;
+  border-radius: 0 24px 24px 0;
+}
+
+/* Espacio vacío dentro de la taza (cuadro con borde punteado) */
+
 .espacio {
-  width: 56px;
-  height: 56px;
-  border: 2px dashed var(--lila);
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 48px;
+  border: 2px dashed #DCB9C6;
   border-radius: 16px;
-  background-color: var(--fondo);
+  background-color: rgba(255, 255, 255, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 26px;
 }
 
 /* Espacio con un ingrediente ya puesto */
+/* El JS agrega "lleno" cuando la jugadora consigue el ingrediente */
 .espacio.lleno {
-  border: 2px solid var(--rosa);
+  border: 0;
+  background-color: var(--mantequilla);
+  box-shadow: 0 4px 0 var(--mantequilla-grosor), inset 0 3px 0 rgba(255, 255, 255, 0.7);
 }
 
+/*Recetas, el ticket*/
+/* Tarjeta rosa con forma de ticket: lleva dos "mordidas" a los lados */
 .receta {
+  position: relative;
   background-color: var(--rosa);
-  border-radius: 24px;
-  padding: 20px 28px;
+  border-radius: 30px;
+  padding: 22px 32px 26px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  box-shadow: 0 9px 0 var(--rosa-grosor), 0 18px 22px -10px rgba(150, 40, 90, 0.45), var(--brillo);
+}
+
+/* Las mordidas son dos círculos del color del fondo, uno en cada borde */
+
+.receta::before,
+.receta::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  margin-top: -13px;   /* Las muescas son dos círculos del color del fondo, uno en cada borde */
+  border-radius: 50%;
+  background-color: var(--fondo);
+  transition: background-color 0.3s;
+}
+
+.receta::before {
+  left: -13px;
+}
+
+.receta::after {
+  right: -13px;
+}
+
+
+/* Cuando el fondo se pone rojo, las mordidas también deben ser rojas
+   para que sigan pareciendo "huecos" */
+body.congelado .receta::before,
+body.congelado .receta::after {
+  background-color: var(--rojo);
 }
 
 
 .receta-etiqueta {
   font-size: 14px;
+  font-weight: 700;
 }
- 
+
 .receta h2 {
-  font-size: 26px;
+  font-size: 34px;
 }
- 
+
+/* Texto "Faltan: ..." (se actualiza desde JS) */
 #faltantes {
   font-size: 18px;
+  font-weight: 700;
 }
 
 
-/* ---------- Tablero ---------- */
+/* Tablero */
+/* Bandeja con 4 columnas donde se colocan las 8 casillas */
 .tablero {
-  background-color: var(--tarjeta);
-  border-radius: 28px;
-  padding: 28px;
-  box-shadow: 0 8px 20px rgba(215, 189, 242, 0.4);
+  background-color: var(--bandeja);
+  border: 4px solid var(--bandeja-borde);
+  border-radius: 34px;
+  padding: 28px 28px 42px;
+  box-shadow:
+    0 11px 0 var(--bandeja-grosor),
+    0 22px 26px -12px rgba(150, 80, 40, 0.45),
+    inset 0 5px 12px rgba(180, 100, 70, 0.15);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 30px 22px;
 }
 
- 
+/* Cada casilla usa --cara y --grosor, 
+los estados solo cambian esas dos variables */
+
 .casilla {
+  --cara: var(--tarjeta);
+  --grosor: var(--borde-suave-grosor);
   height: 110px;
-  border: 2px solid var(--lila);
+  border: 0;
   border-radius: 24px;
-  background-color: var(--tarjeta);
+  background-color: var(--cara);
+  box-shadow: 0 9px 0 var(--grosor), 0 16px 18px -6px rgba(90, 50, 140, 0.4), inset 0 4px 0 rgba(255, 255, 255, 0.6);
+  font-family: var(--fuente-titulo);
   font-size: 48px;
+  color: var(--texto);
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.15s;
 }
 
+/* Al pasar el mouse la casilla se levanta un poco */
 .casilla:hover {
-  background-color: var(--lila-claro);
+  --cara: var(--lila-claro);
   transform: translateY(-3px);
 }
- 
-/* Casilla seleccionada */
-.casilla.elegida {
-  border: 4px solid var(--menta-borde);
-  background-color: var(--menta);
+
+/* Al hacer clic se hunde */
+.casilla:active {
+  transform: translateY(6px);
+  box-shadow: 0 3px 0 var(--grosor), inset 0 4px 0 rgba(255, 255, 255, 0.6);
 }
 
+/* Casilla tapada: se ve un "?" */
+.casilla.oculta {
+  --cara: var(--lila);
+  --grosor: var(--lila-grosor);
+  font-weight: 700;
+  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.55);
+}
+
+.casilla.oculta:hover {
+  --cara: var(--rosa);
+  --grosor: var(--rosa-grosor);
+}
+
+/* Casilla seleccionada */
+.casilla.elegida {
+  --cara: var(--menta);
+  --grosor: var(--menta-grosor);
+}
+
+/* Resultados al destapar una casilla */
+/* Ingrediente correcto, menta (el JS usa "correcto") */
+.casilla.correcto {
+  --cara: var(--menta);
+  --grosor: var(--menta-grosor);
+}
+
+/* Ingrediente que no pertenece a la receta, rosa */
+.casilla.distractor {
+  --cara: var(--rosa);
+  --grosor: var(--rosa-grosor);
+}
+
+/* Ingrediente trampa (Regla C), rojo */
+.casilla.trampa {
+  --cara: var(--rojo);
+  --grosor: var(--rojo-grosor);
+}
+
+/* Casilla bloqueada, semitransparente y sin cursor de clic */
 .casilla.deshabilitada {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
 }
 
+/* Barra inferior */
+/* Mensaje de estado a la izquierda y botón Reiniciar a la derecha */
 .barra-inferior {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  margin-top: 6px;
 }
- 
+
+/* Mensaje en forma de píldora, flex, 1 hace que ocupe todo el espacio libre */
 .mensaje {
   flex: 1;
   background-color: var(--tarjeta);
-  border: 2px solid var(--lila);
-  border-radius: 20px;
-  padding: 14px 24px;
+  border: 3px solid var(--lila-claro);
+  border-radius: 99px;
+  padding: 13px 26px;
   font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 5px 0 var(--lila);
 }
 
+/*  Letrero de resultados  */
+.letrero {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(94, 75, 107, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 10;
+}
+
+
+/* Con la clase "oculto" el letrero desaparece, JS la quita o la pone
+   Se repite aquí porque .letrero define display: flex y debe ganar "none" */
+.letrero.oculto {
+  display: none;
+}
+
+/* Caja blanca centrada con el título, el texto y el botón */
+.letrero-caja {
+  background-color: var(--tarjeta);
+  border: 4px solid var(--rosa);
+  border-radius: 30px;
+  padding: 32px 40px;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 12px 0 var(--rosa-grosor), 0 24px 32px rgba(94, 75, 107, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.letrero-caja h2 {
+  font-size: 32px;
+}
+
+.letrero-caja p {
+  font-size: 20px;
+}
+
+/*Responsive*/
 
 @media (max-width: 700px) {
   .pantalla {
     padding: 0 16px 24px;
   }
- 
+
   .encabezado-inicio {
     padding: 32px 16px 16px;
   }
- 
+
   .encabezado-inicio h1 {
     font-size: 36px;
   }
- 
+
   .encabezado-juego {
     padding: 24px 16px 16px;
     flex-direction: column;
   }
- 
+
+  /* Tarjetas y formulario en una sola columna */
+
   .instrucciones,
-  .registro,
-  .jugadoras {
+  .registro {
     grid-template-columns: 1fr;
   }
- 
+
+  /* Paneles de jugadoras arriba y abajo del tablero */
+  .area-juego {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
   .receta,
   .barra-inferior {
     flex-direction: column;
     align-items: stretch;
   }
- 
+
+ /* El tablero pasa de 4 a 2 columnas */
   .tablero {
     grid-template-columns: repeat(2, 1fr);
+    gap: 26px 16px;
+    padding: 18px 18px 32px;
   }
-}
-
- 
-
- 
-/* Casilla tapada: se ve un "?" */
-.casilla.oculta {
-  background-color: var(--lila);
-  color: var(--texto);
-  font-weight: bold;
-}
- 
-.casilla.oculta:hover {
-  background-color: var(--rosa);
-}
- 
-/* Resultados al destapar una casilla */
-.casilla.correcta {
-  background-color: var(--menta);
-  border-color: var(--menta-borde);
-}
- 
-.casilla.distractor {
-  background-color: var(--rosa);
-  border-color: var(--corazon);
-}
- 
-.casilla.trampa {
-  background-color: var(--rojo);
-  border-color: var(--rojo);
-}
- 
-/*colores en el resultado */
-.casilla.oculta {
-  background-color: var(--lila);
-  font-weight: bold;
-}
-
-.casilla.correcta {
-  background-color: var(--menta);
-  border-color: var(--menta-borde);
-}
-
-.casilla.distractor {
-  background-color: var(--rosa);
-  border-color: var(--corazon);
-}
-
-.casilla.trampa {
-  background-color: var(--rojo);
-  border-color: var(--rojo);
 }
 

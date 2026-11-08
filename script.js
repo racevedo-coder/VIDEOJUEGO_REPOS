@@ -1,7 +1,7 @@
-// juego.js - Dulce Reto Repostero
-// PARTE 1: DATOS DEL JUEGO
+// script.js - Dulce Reto Repostero
+// Parte 1, datos del juego
 
-// ----- 1. VARIABLES Y TIPOS PRIMITIVOS -----
+// variables y datos primitivis
 // const guarda valores que no cambian
 const vidas_iniciales = 3;
 const puntos_por_acierto = 2;
@@ -9,60 +9,66 @@ const jugadas_para_intercambio = 4; // Regla B: cada cuántos aciertos se interc
 
 
 
-// ----- 2. ARREGLOS Y OBJETOS LITERALES -----
-// Arreglo de recetas: cada receta es un objeto.
+// arreglos y objetos literales
+// Arreglo de recetas, cada receta es un objeto.
 // Cada receta tiene dos arreglos de objetos: ingredientes (correctos) y distractores.
-const recetas = [ 
-    {nombre: "Torta de chocolate", tipo: "Horneado", 
+const recetas = [
+  {
+    nombre: "Torta de chocolate", tipo: "Horneado",
     ingredientes: [
       { nombre: "Harina", emoji: "🌾" },
       { nombre: "Huevos", emoji: "🥚" },
       { nombre: "Chocolate", emoji: "🍫" },
-      { nombre: "Mantequilla", emoji: "🧈" }
+      { nombre: "Mantequilla", emoji: "🧈" },
+      { nombre: "Azúcar", emoji: "🍬" }
     ],
-     distractores: [
+    distractores: [
       { nombre: "Sal", emoji: "🧂" },
-      { nombre: "Limón", emoji: "🍋" },
       { nombre: "Queso", emoji: "🧀" }
-    ]},
+    ]
+  },
 
-    {nombre: "Helado de fresa", tipo: "Postre frío", 
+  {
+    nombre: "Helado de fresa", tipo: "Postre frío",
     ingredientes: [
       { nombre: "Leche", emoji: "🥛" },
       { nombre: "Fresa", emoji: "🍓" },
       { nombre: "Azúcar", emoji: "🍬" },
-      { nombre: "Crema de leche", emoji: "🥣" }
+      { nombre: "Crema de leche", emoji: "🥣" },
+      { nombre: "Vainilla", emoji: "🌼" }
     ],
-     distractores: [
+    distractores: [
       { nombre: "Harina", emoji: "🌾" },
-      { nombre: "Mantequilla", emoji: "🧈" },
       { nombre: "Café", emoji: "☕" }
-    ]},
+    ]
+  },
 
-      {nombre: "Limonada de coco", tipo: "Bebida", 
+  {
+    nombre: "Limonada de coco", tipo: "Bebida",
     ingredientes: [
       { nombre: "Limón", emoji: "🍋" },
       { nombre: "Agua", emoji: "💧" },
       { nombre: "Hielo", emoji: "🧊" },
-      { nombre: "Coco", emoji: "🥥" }
+      { nombre: "Coco", emoji: "🥥" },
+      { nombre: "Azúcar", emoji: "🍬" }
     ],
-     distractores: [
+    distractores: [
       { nombre: "Chocolate", emoji: "🍫" },
-      { nombre: "Huevos", emoji: "🥚" },
       { nombre: "Sal", emoji: "🧂" }
-    ]}
+    ]
+  }
 ];
 
 
-// Objeto literal: el ingrediente trampa (Regla C).
+// Objeto literal, el ingrediente trampa (Regla C).
 // Tiene apariencia de ingrediente normal para que no se note a simple vista.
 // esTrampa es un boolean (true/false) que nos dirá si la casilla es la trampa.
 const trampa = { nombre: "Ají picante", emoji: "🌶️", esTrampa: true };
 
 
-// ----- 3. OBJETO DE ESTADO -----
-// Aquí vive todo lo que cambia mientras se juega.
-// Se usa let porque estos datos van a cambiar (los puntos, el turno, etc.).
+// Objeto de estado
+// Aquí vive todo lo que cambia mientras se juega
+// Se usa let porque estos datos van a cambiar como los turnos, los puntos, etc
 
 
 let estado = {
@@ -70,20 +76,26 @@ let estado = {
   jugadorActivo: 0,      // 0 = Jugadora 1, 1 = Jugadora 2
   jugadasExitosas: 0,    // cuántos aciertos van (para la Regla B)
   congelado: false,      // true cuando se activa la Regla C
+  jugadoraCongelada: null, // posición de la jugadora que perderá su turno
   terminado: false,      // true cuando el juego se acaba
   tablero: [],           // las 8 casillas de la ronda (se llena en armarTablero)
   jugadoras: [
-    { nombre: "Jugadora 1", puntos: 0, vidas: vidas_iniciales, taza: [] },
-    { nombre: "Jugadora 2", puntos: 0, vidas: vidas_iniciales, taza: [] }
+    { nombre: "Jugador 1", puntos: 0, vidas: vidas_iniciales, taza: [] },
+    { nombre: "Jugador 2", puntos: 0, vidas: vidas_iniciales, taza: [] }
   ]
 };
 
 
-// PARTE 2: PANTALLA (DOM)
+// parte 2: DOM
 const elTablero = document.getElementById("tablero");
 const elMensaje = document.getElementById("mensaje");
 const elNombreReceta = document.getElementById("nombre-receta");
 const elFaltantes = document.getElementById("faltantes");
+const elLetrero = document.getElementById("letrero");
+const elLetreroTitulo = document.getElementById("letrero-titulo");
+const elLetreroTexto = document.getElementById("letrero-texto");
+const elBtnLetrero = document.getElementById("btn-letrero");
+let accionLetrero = null;
 
 
 //Desordena una lista al azar, hace que el tablero sea distinto 
@@ -99,9 +111,33 @@ const mezclar = (arreglo) => {
   return arreglo;
 };
 
+
+// Regla B, intercambia dos casillas al azar del arreglo lógico
+// Solo intercambia casillas que aún no han sido reveladas
+const intercambiarCasillas = () => {
+  const ocultas = estado.tablero
+    .map((casilla, indice) => ({ casilla, indice }))
+    .filter(({ casilla }) => !casilla.revelada);
+
+  // Si hay menos de 2 ocultas no hay nada que intercambiar
+  if (ocultas.length < 2) return;
+
+  const posA = Math.floor(Math.random() * ocultas.length);
+  let posB = Math.floor(Math.random() * ocultas.length);
+  while (posB === posA) {
+    posB = Math.floor(Math.random() * ocultas.length);
+  }
+
+  const ia = ocultas[posA].indice;
+  const ib = ocultas[posB].indice;
+  const temporal = estado.tablero[ia];
+  estado.tablero[ia] = estado.tablero[ib];
+  estado.tablero[ib] = temporal;
+};
+
 //Recoge los nombres que las jugadoras escribieron en la página de inicio 
 // y los pone en los datos. Si dejaron el campo vacío,
-//  se quedan “Jugadora 1” y “Jugadora 2”
+//  se quedan “Jugador 1” y “Jugador 2”
 
 function leerNombres() {
   const parametros = new URLSearchParams(window.location.search);
@@ -132,7 +168,7 @@ function armarTablero() {
 }
 
 
-//Pieza 5: dibujar el tablero
+//Dibujar el tablero
 //toma los datos del tablero y crea los botones en la pantalla
 
 function dibujarTablero() {
@@ -149,7 +185,7 @@ function dibujarTablero() {
     if (casilla.revelada) {
       boton.textContent = casilla.ingrediente.emoji;
       boton.setAttribute("aria-label", casilla.ingrediente.nombre);
-       boton.classList.add(casilla.resultado);
+      boton.classList.add(casilla.resultado);
     } else {
       boton.textContent = "?";
       boton.classList.add("oculta");
@@ -270,7 +306,26 @@ function estaConseguido(ingrediente) {
 
 //pasar el turno
 function pasarTurno() {
-  estado.jugadorActivo = estado.jugadorActivo === 0 ? 1 : 0;
+  const siguiente = estado.jugadorActivo === 0 ? 1 : 0;
+
+  if (estado.congelado && estado.jugadoraCongelada === siguiente) {
+    estado.congelado = false;
+    estado.jugadoraCongelada = null;
+    return estado.jugadoras[siguiente];
+  }
+
+  estado.jugadorActivo = siguiente;
+  return null;
+}
+
+
+//Pone o quita la clase de congelado del body
+function actualizarFondo() {
+  if (estado.congelado) {
+    document.body.classList.add("congelado");
+  } else {
+    document.body.classList.remove("congelado");
+  }
 }
 
 //el clic
@@ -286,6 +341,7 @@ function manejarClic(posicion) {
   const jugadora = estado.jugadoras[estado.jugadorActivo];
   const resultado = clasificar(casilla.ingrediente);
   let mensaje = "";
+  let aviso = null;
 
   casilla.revelada = true;
   casilla.resultado = resultado;
@@ -295,30 +351,69 @@ function manejarClic(posicion) {
     jugadora.taza.push(casilla.ingrediente);
     estado.jugadasExitosas++;
     mensaje = jugadora.nombre + " acertó con " + casilla.ingrediente.nombre + ".";
+
+    // Regla B: letrero cuando se intercambian dos casillas
+    if (estado.jugadasExitosas % jugadas_para_intercambio === 0) {
+      intercambiarCasillas();
+      aviso = {
+        titulo: "¡Cambio en el tablero!",
+        texto: "Dos casillas se intercambiaron de lugar. ¡Ojo con dónde estaba cada ingrediente!"
+      };
+    }
+
   } else if (resultado === "distractor") {
     jugadora.vidas--;
     mensaje = jugadora.nombre + " falló: " + casilla.ingrediente.nombre + " no va en la receta.";
   } else {
-    mensaje = "¡" + casilla.ingrediente.nombre + " era la trampa!";
+    estado.congelado = true;
+    estado.jugadoraCongelada = estado.jugadorActivo;
+    mensaje = "¡" + casilla.ingrediente.nombre + " era la trampa! " + jugadora.nombre + " perderá su siguiente turno.";
+    aviso = {
+      titulo: "¡Era la trampa!",
+      texto: jugadora.nombre + " eligió " + casilla.ingrediente.nombre + " y perderá su siguiente turno."
+    };
+
+  }
+
+  if (jugadora.vidas === 0) {
+    terminarJuego();
+    return;
   }
 
   if (resultado === "correcto" && recetaCompleta()) {
     if (estado.recetaActual < recetas.length - 1) {
       pasarARecetaSiguiente();
-      mensaje += " ¡Receta completa! Ahora toca: " + recetas[estado.recetaActual].nombre + ".";
+      // Letrero de receta nueva (reemplaza al de intercambio si coinciden)
+      aviso = {
+        titulo: "¡Receta completa!",
+        texto: "Ahora toca: " + recetas[estado.recetaActual].nombre + ". Las tazas se vacían y el tablero cambia."
+      };
     } else {
       terminarJuego();
       return;
     }
   }
 
-  pasarTurno();
+  const saltada = pasarTurno();
+  if (saltada) {
+    mensaje += " " + saltada.nombre + " pierde su turno por la trampa.";
+  }
+
   dibujarTablero();
   actualizarMarcador();
   dibujarTazas();
   actualizarReceta();
+  actualizarFondo();
   elMensaje.textContent = mensaje + " Turno de " + estado.jugadoras[estado.jugadorActivo].nombre + ".";
+
+
+  // Un solo letrero al final, sea cual sea el evento
+  if (aviso) {
+    mostrarLetrero(aviso.titulo, aviso.texto, "Entendido", null);
+  }
+
 }
+
 
 
 //Cuando se consiguen todos los ingredientes de una receta
@@ -339,14 +434,41 @@ function pasarARecetaSiguiente() {
   for (const jugadora of estado.jugadoras) {
     jugadora.taza = [];
   }
+  // Se limpia el estado de congelado para que no arrastre a la siguiente receta
+  estado.congelado = false;
+  estado.jugadoraCongelada = null;
   estado.recetaActual++;
   armarTablero();
+}
+
+//las funciones del letrero
+function mostrarLetrero(titulo, texto, textoBoton, accion) {
+  elLetreroTitulo.textContent = titulo;
+  elLetreroTexto.textContent = texto;
+  elBtnLetrero.textContent = textoBoton;
+  accionLetrero = accion;
+  elLetrero.classList.remove("oculto");
+  elBtnLetrero.focus();
+}
+
+function ocultarLetrero() {
+  elLetrero.classList.add("oculto");
+}
+
+
+function alPulsarLetrero() {
+  ocultarLetrero();
+  if (accionLetrero) {
+    accionLetrero();
+  }
 }
 
 //Todas las recetas completadas, se acaba el juego
 
 function terminarJuego() {
   estado.terminado = true;
+  estado.congelado = false;
+  actualizarFondo();
   dibujarTablero();
   actualizarMarcador();
   dibujarTazas();
@@ -354,21 +476,64 @@ function terminarJuego() {
 
   const j1 = estado.jugadoras[0];
   const j2 = estado.jugadoras[1];
-  let resultadoFinal = "";
+  let titulo = "";
+  let detalle = "";
 
-  if (j1.puntos > j2.puntos) {
-    resultadoFinal = "¡Ganó " + j1.nombre + " con " + j1.puntos + " puntos!";
+  if (j1.vidas === 0) {
+    titulo = "¡Ganó " + j2.nombre + "!";
+    detalle = j1.nombre + " se quedó sin vidas.";
+  } else if (j2.vidas === 0) {
+    titulo = "¡Ganó " + j1.nombre + "!";
+    detalle = j2.nombre + " se quedó sin vidas.";
+  } else if (j1.puntos > j2.puntos) {
+    titulo = "¡Ganó " + j1.nombre + "!";
+    detalle = "Terminó con " + j1.puntos + " puntos contra " + j2.puntos + ".";
   } else if (j2.puntos > j1.puntos) {
-    resultadoFinal = "¡Ganó " + j2.nombre + " con " + j2.puntos + " puntos!";
+    titulo = "¡Ganó " + j2.nombre + "!";
+    detalle = "Terminó con " + j2.puntos + " puntos contra " + j1.puntos + ".";
   } else {
-    resultadoFinal = "¡Empate con " + j1.puntos + " puntos cada una!";
+    titulo = "¡Empate!";
+    detalle = "Las dos terminaron con " + j1.puntos + " puntos.";
   }
 
-  elMensaje.textContent = "Juego terminado. " + resultadoFinal;
+  elMensaje.textContent = "Juego terminado. " + titulo;
+  mostrarLetrero(titulo, detalle, "Jugar de nuevo", reiniciarJuego);
 }
 
+//Reiniciar juego, eja todos los datos como
+//  al principio y vuelve a dibujar
+
+function reiniciarJuego() {
+  ocultarLetrero();
+  estado.recetaActual = 0;
+  estado.jugadorActivo = 0;
+  estado.jugadasExitosas = 0;
+  estado.congelado = false;
+  estado.jugadoraCongelada = null;
+  estado.terminado = false;
+
+  for (const jugadora of estado.jugadoras) {
+    jugadora.puntos = 0;
+    jugadora.vidas = vidas_iniciales;
+    jugadora.taza = [];
+  }
+
+  armarTablero();
+  dibujarTablero();
+  actualizarMarcador();
+  dibujarTazas();
+  actualizarReceta();
+  actualizarFondo();
+  elMensaje.textContent = "Turno de " + estado.jugadoras[estado.jugadorActivo].nombre;
+}
+
+//botón del letrero
+elBtnLetrero.addEventListener("click", alPulsarLetrero);
+//Para conecar el botón reiniciar, sino no hace nada
+document.getElementById("btn-reiniciar").addEventListener("click", reiniciarJuego);
+
 //El arranque
-//Deja todo listo llamando alo anterior en el orden correcto,
+//Deja todo listo llamando a lo anterior en el orden correcto,
 // e inicia al abrir la página
 
 function iniciarJuego() {

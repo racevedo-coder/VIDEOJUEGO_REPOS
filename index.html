@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Dulce Reto Repostero - Inicio</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dulce Reto Repostero - Inicio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-     <header class="encabezado-inicio">
-       <div class="decoracion" aria-hidden="true">
-         <img src="img/cupcake.png" alt="cupcake"/>
-         <img src="img/fresa.png" alt="fresa"/>
-         <img src="img/pastel_fresa.png" alt="pastel_fresa"/>
-       </div>
-     <h1>Dulce Reto Repostero</h1>
-     <p class="subtitulo">Reúne los ingredientes correctos, completa la receta y gana el reto.</p>
-     </header>
+  <!-- encabezado, imágenes, título y subtítulo -->
+  <header class="encabezado-inicio">
+    <div class="decoracion" aria-hidden="true">
+      <img src="img/cupcake.png" alt="cupcake" />
+      <img src="img/fresa.png" alt="fresa" />
+      <img src="img/pastel_fresa.png" alt="pastel_fresa" />
+    </div>
+    <h1>Dulce Reto Repostero</h1>
+    <p class="subtitulo">Reúne los ingredientes correctos, completa la receta y gana el reto.</p>
+  </header>
 
-     
+
   <main class="pantalla">
- 
+
+    <!-- Instrucciones, 3 tarjetas (Elige, Completa, Cuidado)  -->
+  <!-- El css les da un color distinto a cada una -->
     <section class="instrucciones">
       <article class="tarjeta">
         <h2>Elige</h2>
@@ -32,26 +37,38 @@
       </article>
       <article class="tarjeta">
         <h2>Cuidado</h2>
+        <!-- Regla C del taller, la trampa congela el siguiente turno -->
         <p>Hay un ingrediente trampa que congela tu siguiente turno.</p>
       </article>
     </section>
 
+    <!--Formulario de registro-->
     <section class="formulario">
-        <form class="registro" action="juego.html" method="get">
-      <div class="campo">
-        <label for="nombre1">Jugadora 1</label>
-        <input id="nombre1" name="j1" type="text" placeholder="Escribe tu nombre">
-      </div>
-      <div class="campo">
-        <label for="nombre2">Jugadora 2</label>
-        <input id="nombre2" name="j2" type="text" placeholder="Escribe tu nombre">
-      </div>
-      <button id="btn-comenzar" class="boton boton-principal" type="submit">Comenzar a jugar</button>
-    </form>
+      <form class="registro" action="juego.html" method="get">
+          <!-- Campo del jugador 1 -->
+        <div class="campo">
+          <label for="nombre1">Jugadora 1</label>
+          <input id="nombre1" name="j1" type="text" placeholder="Escribe tu nombre">
+        </div>
+        <!-- Campo del jugador 2 -->
+        <div class="campo">
+          <label for="nombre2">Jugadora 2</label>
+          <input id="nombre2" name="j2" type="text" placeholder="Escribe tu nombre">
+        </div>
+           <!-- Botón de envío, type="submit" abre juego.html con los nombres -->
+        <button id="btn-comenzar" href="juego.html" class="boton boton-principal" type="submit">Comenzar a
+          jugar</button>
+      </form>
     </section>
 
   </main>
 
 
+
+
+
+
+
 </body>
+
 </html>
